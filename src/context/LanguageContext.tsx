@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { LanguageCode, LanguageInfo, SUPPORTED_LANGUAGES } from '../i18n/languages';
 import { TRANSLATIONS, TranslationDictionary } from '../i18n/translations';
 
@@ -15,18 +15,19 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<LanguageCode>('en');
-
-  useEffect(() => {
-    try {
-      const savedLang = localStorage.getItem('BOB_ESG_LANG') as LanguageCode;
-      if (savedLang && SUPPORTED_LANGUAGES.some((l) => l.code === savedLang)) {
-        setLanguageState(savedLang);
+  const [language, setLanguageState] = useState<LanguageCode>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedLang = localStorage.getItem('BOB_ESG_LANG') as LanguageCode;
+        if (savedLang && SUPPORTED_LANGUAGES.some((l) => l.code === savedLang)) {
+          return savedLang;
+        }
+      } catch (e) {
+        console.warn('Could not read saved language from localStorage', e);
       }
-    } catch (e) {
-      console.warn('Could not read saved language from localStorage', e);
     }
-  }, []);
+    return 'en';
+  });
 
   const setLanguage = (lang: LanguageCode) => {
     setLanguageState(lang);

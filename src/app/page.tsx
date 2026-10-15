@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
@@ -16,38 +16,34 @@ import { Entry } from '../types';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string>('gallery');
-  const [entries, setEntries] = useState<Entry[]>(INITIAL_ENTRIES);
-  const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  // Initialize and load persisted entries from localStorage
-  useEffect(() => {
-    setIsClient(true);
-    const saved = localStorage.getItem('BOB_ESG_ENTRIES_V1');
-    if (saved) {
+  const [entries, setEntries] = useState<Entry[]>(() => {
+    if (typeof window !== 'undefined') {
       try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setEntries(parsed);
+        const saved = localStorage.getItem('BOB_ESG_ENTRIES_V1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
         }
       } catch (err) {
         console.error('Failed to parse saved entries:', err);
       }
     }
-
-    // Check URL parameters for direct WhatsApp status share links (?entry=id)
+    return INITIAL_ENTRIES;
+  });
+  const [selectedEntry, setSelectedEntry] = useState<Entry | null>(() => {
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const entryId = params.get('entry');
-      if (entryId) {
-        const found = INITIAL_ENTRIES.find((e) => e.id === entryId);
-        if (found) {
-          setSelectedEntry(found);
-          setActiveTab('gallery');
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const entryId = params.get('entry');
+        if (entryId) {
+          return INITIAL_ENTRIES.find((e) => e.id === entryId) || null;
         }
-      }
+      } catch {}
     }
-  }, []);
+    return null;
+  });
 
   // Save entries to localStorage on updates
   const updateEntriesState = (newEntries: Entry[]) => {
@@ -103,7 +99,7 @@ export default function Home() {
   };
 
   // Admin Reject Entry
-  const handleRejectEntry = (id: string, reason: string) => {
+  const handleRejectEntry = (id: string, _reason: string) => {
     const updated = entries.map((e) => (e.id === id ? { ...e, status: 'rejected' as const } : e));
     updateEntriesState(updated);
   };

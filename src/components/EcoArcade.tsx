@@ -947,30 +947,32 @@ const GreenSprintGame:React.FC=()=>{
 ════════════════════════════════════════════════════ */
 const GEMS=['☀️','🌬️','💧','⚡','🌱','🔥'];
 const GM=6;
+
+const mkGrid=()=>Array.from({length:GM*GM},()=>GEMS[Math.floor(Math.random()*GEMS.length)]);
+
+const findMatches=(g:string[]):Set<number>=>{
+  const m=new Set<number>();
+  for(let r=0;r<GM;r++) for(let c=0;c<GM-2;c++){const i=r*GM+c;if(g[i]===g[i+1]&&g[i]===g[i+2]){m.add(i);m.add(i+1);m.add(i+2);}}
+  for(let r=0;r<GM-2;r++) for(let c=0;c<GM;c++){const i=r*GM+c;if(g[i]===g[i+GM]&&g[i]===g[i+GM*2]){m.add(i);m.add(i+GM);m.add(i+GM*2);}}
+  return m;
+};
+
+const applyGravity=(g:string[]):{ng:string[];pts:number}=>{
+  const m=findMatches(g); if(m.size===0)return{ng:g,pts:0};
+  const ng=[...g]; m.forEach(i=>ng[i]='');
+  for(let c=0;c<GM;c++){
+    let col=[];for(let r=0;r<GM;r++)col.push(ng[r*GM+c]);
+    col=col.filter(x=>x!=='');while(col.length<GM)col.unshift(GEMS[Math.floor(Math.random()*GEMS.length)]);
+    for(let r=0;r<GM;r++)ng[r*GM+c]=col[r];
+  }
+  return{ng,pts:m.size*50};
+};
+
 const SolarMatch3Game:React.FC=()=>{
-  const mkGrid=()=>Array.from({length:GM*GM},()=>GEMS[Math.floor(Math.random()*GEMS.length)]);
   const [grid,setGrid]=useState<string[]>(mkGrid);
   const [selected,setSelected]=useState<number|null>(null);
   const [score,setScore]=useState(0); const [hi,setHi]=useState(0);
   const [matches,setMatches]=useState(0); const [flash,setFlash]=useState<Set<number>>(new Set());
-
-  const findMatches=(g:string[]):Set<number>=>{
-    const m=new Set<number>();
-    for(let r=0;r<GM;r++) for(let c=0;c<GM-2;c++){const i=r*GM+c;if(g[i]===g[i+1]&&g[i]===g[i+2]){m.add(i);m.add(i+1);m.add(i+2);}}
-    for(let r=0;r<GM-2;r++) for(let c=0;c<GM;c++){const i=r*GM+c;if(g[i]===g[i+GM]&&g[i]===g[i+GM*2]){m.add(i);m.add(i+GM);m.add(i+GM*2);}}
-    return m;
-  };
-
-  const applyGravity=(g:string[]):{ng:string[];pts:number}=>{
-    const m=findMatches(g); if(m.size===0)return{ng:g,pts:0};
-    const ng=[...g]; m.forEach(i=>ng[i]='');
-    for(let c=0;c<GM;c++){
-      let col=[];for(let r=0;r<GM;r++)col.push(ng[r*GM+c]);
-      col=col.filter(x=>x!=='');while(col.length<GM)col.unshift(GEMS[Math.floor(Math.random()*GEMS.length)]);
-      for(let r=0;r<GM;r++)ng[r*GM+c]=col[r];
-    }
-    return{ng,pts:m.size*50};
-  };
 
   const handleClick=(idx:number)=>{
     if(selected===null){setSelected(idx);return;}
