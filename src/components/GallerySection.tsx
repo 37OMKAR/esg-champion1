@@ -5,9 +5,7 @@ import {
   Palette, 
   Video, 
   Heart, 
-  Share2, 
   Search, 
-  Filter, 
   MapPin, 
   Sparkles, 
   Check, 
@@ -15,7 +13,7 @@ import {
   SlidersHorizontal 
 } from 'lucide-react';
 import { Entry, AgeGroup, MediaCategory, ESGTheme } from '../types';
-import { ESG_THEMES } from '../data/mockEntries';
+import { useLanguage } from '../context/LanguageContext';
 
 interface GallerySectionProps {
   entries: Entry[];
@@ -30,12 +28,20 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onLikeEntry,
   onNavigateSubmit,
 }) => {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<MediaCategory | 'all'>('all');
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | 'all'>('all');
   const [selectedTheme, setSelectedTheme] = useState<ESGTheme | 'all'>('all');
   const [sortBy, setSortBy] = useState<'likes' | 'recent'>('likes');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const themeList = [
+    { id: 'water' as const, label: t.themes.water_label },
+    { id: 'energy' as const, label: t.themes.energy_label },
+    { id: 'waste' as const, label: t.themes.waste_label },
+    { id: 'green-branch' as const, label: t.themes.green_branch_label },
+  ];
 
   // Filter and sort entries
   const filteredEntries = useMemo(() => {
@@ -93,22 +99,22 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         <div>
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-600 mb-1">
             <Sparkles className="w-4 h-4" />
-            <span>Community Gallery</span>
+            <span>{t.gallery.title}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Explore Creative Art & Inspiring Reels
+            {t.gallery.title}
           </h2>
           <p className="text-slate-600 text-sm mt-1">
-            Cheer for the children of Bank of Baroda! Tap any entry to watch full reels or zoom in on artwork.
+            {t.gallery.subtitle}
           </p>
         </div>
 
         {/* Quick Search */}
-        <div className="relative w-full md:w-72">
+        <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search child, branch, zone..."
+            placeholder={t.gallery.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
@@ -118,7 +124,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               onClick={() => setSearchQuery('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600"
             >
-              Clear
+              ✕
             </button>
           )}
         </div>
@@ -140,7 +146,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              All Entries ({entries.filter(e => e.status === 'approved').length})
+              {t.gallery.allCategories} ({entries.filter(e => e.status === 'approved').length})
             </button>
             <button
               onClick={() => setSelectedCategory('art')}
@@ -151,7 +157,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               }`}
             >
               <Palette className="w-3.5 h-3.5" />
-              <span>Art & Posters</span>
+              <span>{t.gallery.artOnly}</span>
             </button>
             <button
               onClick={() => setSelectedCategory('reel')}
@@ -162,22 +168,22 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               }`}
             >
               <Video className="w-3.5 h-3.5" />
-              <span>Eco Reels (Video)</span>
+              <span>{t.gallery.reelsOnly}</span>
             </button>
           </div>
 
           {/* Sort Control */}
           <div className="flex items-center gap-2 text-xs font-medium text-slate-600 ml-auto">
             <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
-            <span>Sort by:</span>
+            <span>{t.gallery.sortBy}:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'likes' | 'recent')}
               aria-label="Sort entries by"
               className="py-1 px-2.5 rounded-lg border border-slate-200 bg-white font-semibold text-slate-800 text-xs focus:ring-2 focus:ring-orange-500/20 focus:outline-hidden"
             >
-              <option value="likes">Most Encouraged (Likes)</option>
-              <option value="recent">Latest Submissions</option>
+              <option value="likes">{t.gallery.mostLiked}</option>
+              <option value="recent">{t.gallery.newest}</option>
             </select>
           </div>
         </div>
@@ -185,9 +191,6 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         {/* Row 2: Age Group & Theme Pills */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
           
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">
-            Age Group:
-          </span>
           <button
             onClick={() => setSelectedAgeGroup('all')}
             className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
@@ -196,7 +199,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All Ages
+            {t.gallery.allAges}
           </button>
           <button
             onClick={() => setSelectedAgeGroup('sub-junior')}
@@ -206,7 +209,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
             }`}
           >
-            Sub-Juniors (5–9 yrs)
+            {t.gallery.subJunior}
           </button>
           <button
             onClick={() => setSelectedAgeGroup('junior')}
@@ -216,7 +219,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
             }`}
           >
-            Juniors (10–14 yrs)
+            {t.gallery.junior}
           </button>
           <button
             onClick={() => setSelectedAgeGroup('teen')}
@@ -226,21 +229,20 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 : 'bg-blue-50 text-blue-800 hover:bg-blue-100'
             }`}
           >
-            Teens (15–18 yrs)
+            {t.gallery.teen}
           </button>
 
           {/* Theme Dropdown */}
           <div className="ml-auto flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-slate-500">Theme:</span>
             <select
               value={selectedTheme}
               onChange={(e) => setSelectedTheme(e.target.value as ESGTheme | 'all')}
               aria-label="Filter entries by theme"
               className="py-1 px-2.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700"
             >
-              <option value="all">All ESG Themes</option>
-              {ESG_THEMES.map(t => (
-                <option key={t.id} value={t.id}>{t.label}</option>
+              <option value="all">{t.gallery.allThemes}</option>
+              {themeList.map(item => (
+                <option key={item.id} value={item.id}>{item.label}</option>
               ))}
             </select>
           </div>
@@ -252,15 +254,15 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
       {filteredEntries.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-slate-200">
           <Palette className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-slate-700">No entries match your filter</h3>
+          <h3 className="text-lg font-bold text-slate-700">{t.gallery.noEntries}</h3>
           <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">
-            Try adjusting your age or category filters, or be the first in your branch to submit an entry!
+            {t.gallery.subtitle}
           </p>
           <button
             onClick={onNavigateSubmit}
             className="mt-4 px-4 py-2 rounded-xl bg-orange-500 text-white text-xs font-bold hover:bg-orange-600 transition-colors"
           >
-            Submit an Entry Now
+            {t.nav.submitCta}
           </button>
         </div>
       ) : (
@@ -362,12 +364,12 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                         {copiedId === entry.id ? (
                           <>
                             <Check className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Shared!</span>
+                            <span>{t.gallery.copied}</span>
                           </>
                         ) : (
                           <>
                             <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Share</span>
+                            <span>{t.gallery.shareWhatsApp}</span>
                           </>
                         )}
                       </button>

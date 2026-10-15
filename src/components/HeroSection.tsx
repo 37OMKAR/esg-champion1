@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Trophy, Heart, Users, Clock, ArrowRight, Play, Palette, Video, Gamepad2, ShieldAlert } from 'lucide-react';
-import { ESG_THEMES } from '../data/mockEntries';
+import { Sparkles, Trophy, Heart, Users, Clock, ArrowRight, Palette, Gamepad2 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { ESGTheme } from '../types';
 
 interface HeroSectionProps {
   onNavigate: (tab: string) => void;
@@ -15,6 +16,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   totalEntries,
   totalLikes,
 }) => {
+  const { t } = useLanguage();
+
+  const themesConfig: {
+    id: ESGTheme;
+    label: string;
+    desc: string;
+    color: string;
+  }[] = [
+    {
+      id: 'water',
+      label: t.themes.water_label,
+      desc: t.themes.water_desc,
+      color: 'from-blue-500 to-cyan-500'
+    },
+    {
+      id: 'energy',
+      label: t.themes.energy_label,
+      desc: t.themes.energy_desc,
+      color: 'from-amber-500 to-orange-500'
+    },
+    {
+      id: 'waste',
+      label: t.themes.waste_label,
+      desc: t.themes.waste_desc,
+      color: 'from-emerald-500 to-teal-500'
+    },
+    {
+      id: 'green-branch',
+      label: t.themes.green_branch_label,
+      desc: t.themes.green_branch_desc,
+      color: 'from-lime-500 to-green-600'
+    }
+  ];
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-orange-50/60 via-amber-50/30 to-emerald-50/40 border-b border-orange-100/60 py-12 md:py-16">
       
@@ -29,11 +64,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-orange-200/80 shadow-xs text-xs font-bold text-orange-950">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-            <span className="font-extrabold text-[#F37021]">Bank of Baroda</span>
+            <span className="font-extrabold text-[#F37021]">{t.hero.bankName}</span>
             <span>•</span>
-            <span className="text-emerald-700 font-semibold">ESG & Climate Risk Cell Initiative</span>
+            <span className="text-emerald-700 font-semibold">{t.hero.cellInitiative}</span>
             <span className="bg-orange-500 text-white text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ml-1">
-              Internal Bank Portal
+              {t.hero.internalPortal}
             </span>
           </div>
         </div>
@@ -41,10 +76,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Main Heading & Tagline */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-            Young Minds, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F37021] via-amber-500 to-emerald-600">Green Future</span>: BOB ESG Champion 2026
+            {t.hero.titlePart1} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F37021] via-amber-500 to-emerald-600">{t.hero.titlePart2}</span> {t.hero.titlePart3}
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            The exclusive stage for the talented children & teens of <strong className="text-slate-800">Bank of Baroda employees</strong> across all zones. Share creative art & inspiring reels, spread the message on WhatsApp, and learn sustainability!
+            {t.hero.subtitle}
           </p>
 
           {/* Call to Action Buttons */}
@@ -54,7 +89,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#F37021] to-amber-600 hover:from-[#d95d12] hover:to-amber-700 text-white font-bold text-base shadow-lg shadow-orange-500/25 active:scale-95 transition-all"
             >
               <Palette className="w-5 h-5" />
-              <span>Submit Child’s Entry</span>
+              <span>{t.hero.ctaSubmit}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -63,7 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white border border-emerald-200 text-emerald-800 hover:bg-emerald-50/80 font-bold text-base shadow-sm transition-all"
             >
               <Gamepad2 className="w-5 h-5 text-emerald-600" />
-              <span>Play Eco Games</span>
+              <span>{t.hero.ctaGames}</span>
             </button>
 
             <button
@@ -71,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold text-base shadow-sm transition-all"
             >
               <Sparkles className="w-5 h-5 text-amber-500" />
-              <span>Take Eco Quiz</span>
+              <span>{t.hero.ctaQuiz}</span>
             </button>
           </div>
         </div>
@@ -84,7 +119,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <Trophy className="w-5 h-5" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{totalEntries}</div>
-            <div className="text-xs font-semibold text-slate-500">Live Approved Entries</div>
+            <div className="text-xs font-semibold text-slate-500">{t.hero.statLiveEntries}</div>
           </div>
 
           <div className="glass-panel p-4 rounded-2xl border border-pink-100 text-center shadow-xs">
@@ -92,33 +127,33 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <Heart className="w-5 h-5 fill-pink-500 text-pink-500" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{totalLikes}+</div>
-            <div className="text-xs font-semibold text-slate-500">Family Encouragements</div>
+            <div className="text-xs font-semibold text-slate-500">{t.hero.statLikes}</div>
           </div>
 
           <div className="glass-panel p-4 rounded-2xl border border-emerald-100 text-center shadow-xs">
             <div className="flex items-center justify-center w-10 h-10 mx-auto rounded-xl bg-emerald-100 text-emerald-600 mb-2">
               <Users className="w-5 h-5" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">12 Zones</div>
-            <div className="text-xs font-semibold text-slate-500">Pan-India Participation</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.hero.statZones}</div>
+            <div className="text-xs font-semibold text-slate-500">{t.hero.statZonesDesc}</div>
           </div>
 
           <div className="glass-panel p-4 rounded-2xl border border-blue-100 text-center shadow-xs">
             <div className="flex items-center justify-center w-10 h-10 mx-auto rounded-xl bg-blue-100 text-blue-600 mb-2">
               <Clock className="w-5 h-5" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">14 Days</div>
-            <div className="text-xs font-semibold text-slate-500">Left for Submissions</div>
+            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{t.hero.statDaysLeft}</div>
+            <div className="text-xs font-semibold text-slate-500">{t.hero.statDaysLeftDesc}</div>
           </div>
         </div>
 
         {/* 4 Core Themes Showcase Bar */}
         <div className="mt-10 pt-8 border-t border-orange-100/80">
           <p className="text-center text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
-            Official Competition Themes (Choose Any)
+            {t.hero.themesTitle}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {ESG_THEMES.map((theme) => (
+            {themesConfig.map((theme) => (
               <div
                 key={theme.id}
                 className="bg-white/90 border border-slate-200/80 rounded-2xl p-3.5 hover:shadow-md transition-shadow group"

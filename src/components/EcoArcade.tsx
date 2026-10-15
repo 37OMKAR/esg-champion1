@@ -62,10 +62,13 @@ const P = {
   slate:  '#94a3b8',
 };
 
+import { useLanguage } from '../context/LanguageContext';
+
 /* ════════════════════════════════════════════════════
    ARCADE SHELL
 ════════════════════════════════════════════════════ */
 export const EcoArcade: React.FC = () => {
+  const { t } = useLanguage();
   const [activeGame, setActiveGame] = useState<GameId>('snake');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -83,10 +86,10 @@ export const EcoArcade: React.FC = () => {
           <span>BOB ESG Junior Arcade • 13 Sustainability Games</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-          Play, Learn &amp; <span className="text-emerald-600">Power a Green Planet</span>!
+          {t.arcade.title}
         </h2>
         <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
-          13 interactive 8-bit style sustainability games — each one teaches real ESG concepts while you play!
+          {t.arcade.subtitle}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
           {categories.map((cat) => (

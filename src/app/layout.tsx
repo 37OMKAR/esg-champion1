@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   }
 };
 
+import { LanguageProvider } from '../context/LanguageContext';
+
 export default function RootLayout({
   children,
 }: {
@@ -38,7 +40,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col font-['Plus_Jakarta_Sans',sans-serif] bg-slate-50 text-slate-900 antialiased selection:bg-orange-500 selection:text-white">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { Leaf, Award, BookOpen, Gamepad2, ShieldCheck, PlusCircle, Menu, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 
 interface NavbarProps {
   activeTab: string;
@@ -11,13 +13,14 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pendingCount = 0 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const navItems = [
-    { id: 'gallery', label: 'Gallery & Entries', icon: Award },
-    { id: 'submit', label: 'Submit Child’s Entry', icon: PlusCircle },
-    { id: 'learn', label: 'ESG Kids Hub', icon: BookOpen },
-    { id: 'arcade', label: 'Eco Arcade', icon: Gamepad2, badge: 'Games' },
-    { id: 'admin', label: 'Jury & Admin', icon: ShieldCheck, count: pendingCount }
+    { id: 'gallery', label: t.nav.gallery, icon: Award },
+    { id: 'submit', label: t.nav.submit, icon: PlusCircle },
+    { id: 'learn', label: t.nav.learn, icon: BookOpen },
+    { id: 'arcade', label: t.nav.arcade, icon: Gamepad2, badge: t.nav.gamesBadge },
+    { id: 'admin', label: t.nav.admin, icon: ShieldCheck, count: pendingCount }
   ];
 
   const handleTabClick = (id: string) => {
@@ -46,21 +49,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-lg sm:text-xl text-slate-900 tracking-tight">
-                  Bank of Baroda
+                  {t.nav.brand}
                 </span>
                 <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                   <Leaf className="w-3 h-3 text-emerald-600" />
                   ESG Champion 2026
                 </span>
               </div>
-              <span className="text-xs font-semibold text-slate-500 tracking-wide">
-                ESG & Climate Risk Cell • Young Champions Portal
+              <span className="text-xs font-semibold text-slate-500 tracking-wide line-clamp-1">
+                {t.nav.esgCell} • {t.nav.portalName}
               </span>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1.5 lg:gap-2">
+          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -68,14 +71,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-150 ${
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 ${
                     isActive
                       ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm shadow-orange-500/25'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-orange-50/70'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
-                  <span>{item.label}</span>
+                  <span className="truncate max-w-[130px]">{item.label}</span>
                   {item.badge && (
                     <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded-full bg-emerald-500 text-white animate-pulse">
                       {item.badge}
@@ -91,20 +94,26 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
             })}
           </nav>
 
-          {/* Action Button & Mobile Toggle */}
-          <div className="flex items-center gap-2.5">
+          {/* Action Button & Language Selector & Mobile Toggle */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* 12 Indian Languages Selector (Desktop) */}
+            <div className="hidden sm:block">
+              <LanguageSelector />
+            </div>
+
+            {/* Quick Submit Entry CTA */}
             <button
               onClick={() => handleTabClick('submit')}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold text-sm shadow-sm hover:from-emerald-700 hover:to-teal-700 transition-all active:scale-95"
+              className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold text-sm shadow-sm hover:from-emerald-700 hover:to-teal-700 transition-all active:scale-95"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Submit Entry</span>
+              <span className="whitespace-nowrap">{t.nav.submitCta}</span>
             </button>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl bg-orange-50 text-orange-900 hover:bg-orange-100 transition-colors"
+              className="lg:hidden p-2.5 rounded-xl bg-orange-50 text-orange-900 hover:bg-orange-100 transition-colors"
               aria-label="Toggle navigation"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -114,7 +123,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-3 px-2 border-t border-orange-100 space-y-1.5 animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden py-3 px-2 border-t border-orange-100 space-y-2 animate-in slide-in-from-top-2 duration-200">
+            {/* Mobile Language Selector */}
+            <div className="p-2 bg-orange-50/70 rounded-xl flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-700">Language / भाषा:</span>
+              <LanguageSelector compact />
+            </div>
+
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -135,6 +150,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, pending
                   {item.badge && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white">
                       {item.badge}
+                    </span>
+                  )}
+                  {item.count !== undefined && item.count > 0 && (
+                    <span className="flex items-center justify-center w-5 h-5 text-[11px] font-bold rounded-full bg-orange-600 text-white">
+                      {item.count}
                     </span>
                   )}
                 </button>

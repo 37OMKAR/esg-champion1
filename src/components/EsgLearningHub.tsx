@@ -20,7 +20,10 @@ import {
 import confetti from 'canvas-confetti';
 import { ESG_PILLARS, BOB_GREEN_MILESTONES, QUIZ_QUESTIONS } from '../data/esgContent';
 
+import { useLanguage } from '../context/LanguageContext';
+
 export const EsgLearningHub: React.FC = () => {
+  const { t } = useLanguage();
   const [activePillarIndex, setActivePillarIndex] = useState(0);
 
   // Quiz state
@@ -86,13 +89,13 @@ export const EsgLearningHub: React.FC = () => {
       <div className="text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-3 border border-emerald-200">
           <Leaf className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Bank of Baroda ESG & Climate Risk Cell Knowledge Hub</span>
+          <span>Bank of Baroda • {t.nav.esgCell}</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          What is <span className="text-[#F37021]">E-S-G</span> & Why Does it Matter?
+          {t.learn.title}
         </h2>
         <p className="text-slate-600 text-sm sm:text-base mt-2">
-          Discover how saving water, supporting communities, and acting honestly builds a sustainable world for everyone.
+          {t.learn.subtitle}
         </p>
       </div>
 
